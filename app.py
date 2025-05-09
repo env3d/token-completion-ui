@@ -45,8 +45,15 @@ async def get_token_probabilities(input_text: InputText):
 
     top_k = 10
     top_k_values, top_k_indices = torch.topk(probabilities, top_k)
-    top_k_tokens = tokenizer.convert_ids_to_tokens(top_k_indices.tolist())
-    result = [{"token": token.replace('Ġ', '').replace('Ċ','\n'), "probability": prob.item()} for token, prob in zip(top_k_tokens, top_k_values)]
+
+    # Not decoding automatically
+    # top_k_tokens = tokenizer.convert_ids_to_tokens(top_k_indices.tolist())
+    # print(top_k_tokens)
+    # result = [{"token": token.replace('Ġ', '').replace('Ċ','\n'), "probability": prob.item()} for token, prob in zip(top_k_tokens, top_k_values)]
+    
+    top_k_tokens = [tokenizer.decode([token_id]) for token_id in top_k_indices.tolist()]
+    print(top_k_tokens)
+    result = [{"token": token, "probability": prob.item()} for token, prob in zip(top_k_tokens, top_k_values)]
     
     return result
 
